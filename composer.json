@@ -1,0 +1,17 @@
+{
+    "name": "ethereal/simpleConfig",
+    "type": "project",
+    "require": {
+        "php": ">=5.3.9",
+    },
+    "require-dev": {
+        "php": ">=5.3.9",
+        "phpunit/phpunit": "~4.8",
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Ethereal\\": "lib"
+        }
+    }
+}
