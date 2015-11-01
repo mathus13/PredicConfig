@@ -25,7 +25,7 @@ class Config
      * @param Ethereal\Cache $cache [description]
      * @param Ethereal\Hooks $hooks [description]
      */
-    public function __construct(Ethereal\Cache $cache, Ethereal\Hooks $hooks)
+    public function __construct(Cache $cache, Hooks $hooks)
     {
         $this->hooks = $hooks;
         $this->cache = $cache;
