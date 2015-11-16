@@ -35,12 +35,30 @@ class Config
     protected function getConfig()
     {
         if ($config = $this->cache->get($this->key)) {
-            return $config;
+            return (array) $config;
         }
-        if (!is_dir($this->dir)) {
-            throw new \Exception('Invalid Config Directory: '.$this->dir);
+        $config = array();
+        if (is_dir($this->dir)) {
+            $files = array();
+            foreach (new \DirectoryIterator($this->dir) as $file) {
+                if (strpos($file->getFilename(), '.json') && $file->isReadable()) {
+                    $files[$file->getFilename()] = $file->getPathname();
+                }
+            }
+            ksort($files);
+            foreach ($files as $name => $path) {
+                $h = fopen($path, 'r+');
+                $json = fread($h, 2048);
+                if ($parse = json_decode($json)) {
+                    foreach ($parse as $k => $v) {
+                        $config[$k] = $v;
+                    }
+                } else {
+                    error_log("Invalid Config: in {$path}\n {$json}");
+                }
+            }
         }
-        $config = $this->hooks->fire("{$this->key}build", array());
+        $config = $this->hooks->fire("{$this->key}build", $config);
         $this->cache->set($this->key, $config);
         return $config;
     }
@@ -58,7 +76,6 @@ class Config
 
     public function get($name)
     {
-        $name = "{$this->key}{$name}";
         if (isset($this->config[$name])) {
             return $this->config[$name];
         }
