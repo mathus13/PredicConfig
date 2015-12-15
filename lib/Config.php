@@ -14,7 +14,7 @@ use Ethereal\Hooks;
 class Config
 {
     
-    private $config;
+    protected $config;
     protected $cache;
     protected $hooks;
     protected $dir = __DIR__.'/config/';
