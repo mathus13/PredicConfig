@@ -41,20 +41,26 @@ class Config
         if (is_dir($this->dir)) {
             $files = array();
             foreach (new \DirectoryIterator($this->dir) as $file) {
-                if (strpos($file->getFilename(), '.json') && $file->isReadable()) {
+                if (
+                    $file->isFile() &&
+                    strpos($file->getFilename(), '.json') &&
+                    $file->isReadable()
+                ) {
                     $files[$file->getFilename()] = $file->getPathname();
                 }
             }
             ksort($files);
             foreach ($files as $name => $path) {
                 $h = fopen($path, 'r+');
-                $json = fread($h, 2048);
-                if ($parse = json_decode($json)) {
-                    foreach ($parse as $k => $v) {
-                        $config[$k] = $v;
+                if ($h) {
+                    $json = fread($h, 2048);
+                    if ($parse = json_decode($json)) {
+                        foreach ($parse as $k => $v) {
+                            $config[$k] = $v;
+                        }
+                    } else {
+                        error_log("Invalid Config: in {$path}\n {$json}");
                     }
-                } else {
-                    error_log("Invalid Config: in {$path}\n {$json}");
                 }
             }
         }
